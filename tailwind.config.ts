@@ -1,6 +1,7 @@
-import type { Config } from 'tailwindcss'
+import * as colors from 'tailwindcss/colors';
 
-const config: Config = {
+/** @type {import('tailwindcss').Config} */
+module.exports = {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -13,8 +14,17 @@ const config: Config = {
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
+      colors: {
+        primary: {
+          ...colors.amber,
+          DEFAULT: colors.amber["500"]
+        },
+        'primary-green': '#54C34A',
+        'primary-blue': '#99ADF2',
+        'primary-orange': '#FFAF14',
+        'primary-gray': colors.zinc["500"],
+      }
     },
   },
   plugins: [],
-}
-export default config
+};

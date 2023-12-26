@@ -2,26 +2,75 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+    font-family: "CirceRegular";
+    src: url("/fonts/circe/Circe-Regular.ttf") format("truetype");
+}
+
+.container-header {
+    @apply container px-8 pt-2;
+}
+
+@media screen(md) {
+    .container-header {
+        @apply px-28 pt-2;
+    }
+}
+
+.container {
+    @apply px-8 pt-3;
+}
+
+@media screen(md) {
+    .container {
+        @apply px-28 pt-5;
+    }
+}
+
+
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+    --foreground-rgb: 0, 0, 0;
+    --background-start-rgb: 214, 219, 220;
+    --background-end-rgb: 255, 255, 255;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+    :root {
+        --foreground-rgb: 255, 255, 255;
+        --background-start-rgb: 0, 0, 0;
+        --background-end-rgb: 0, 0, 0;
+    }
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+    color: rgb(var(--foreground-rgb));
+    background: linear-gradient(
+            to bottom,
+            transparent,
+            rgb(var(--background-end-rgb))
+    ) rgb(var(--background-start-rgb));
+}
+
+a {
+    font-family: "CirceRegular", serif;
+}
+
+.nunito-font, h1, h2, h3, h4, h5, h6 {
+    font-family: "Nunito", serif;
+}
+
+.home-page-section {
+    @apply pt-24 py-24;
+}
+
+#__next {
+    @apply flex flex-col min-h-screen;
+}
+
+input, select {
+    @apply border-neutral-500 rounded-lg px-2 py-1;
+}
+
+input.error, select.error {
+    @apply border-rose-500;
 }

@@ -1,0 +1,42 @@
+.home_preview_block__bg {
+    position: absolute;
+    z-index: -5000;
+    height: 100%;
+    width: 100%;
+
+}
+
+.home_preview_block__panel {
+    z-index: 1;
+    left: 0;
+    top: 25%;
+}
+
+.home_preview_block__panel .inner_container {
+    max-width: 25rem;
+}
+
+@media screen(lg){
+    .home_preview_block__panel .inner_container {
+        max-width: 40rem;
+    }
+}
+
+.home_preview_block__animal {
+    position: absolute;
+    z-index: -4999;
+    right: 70px;
+    bottom: 0;
+}
+
+.home_preview_block__animal img {
+    display: none;
+}
+
+@media screen(xl) {
+    .home_preview_block__animal img {
+        display: block;
+        width: 100%;
+        height: 80vh;
+    }
+}
