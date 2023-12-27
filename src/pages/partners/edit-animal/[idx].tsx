@@ -1,14 +1,17 @@
 import {useRouter} from "next/router";
 import {useAuth} from "@/auth/AuthProvider";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {CustomInput} from "@/components/formComponents/CustomInput/CustomInput";
 import {CustomSelect} from "@/components/formComponents/CustomSelect/CustomSelect";
 import {CustomButton} from "@/components/Button/CustomButton";
+import axios from "axios";
 
 export default function EditAnimalPage() {
     const router = useRouter();
 
     const auth = useAuth();
+
+    const [isDisabled, toggleIsDisabled] = useState(true);
 
     const [name, setName] = useState('');
     const [breed, setBreed] = useState('');
@@ -19,6 +22,25 @@ export default function EditAnimalPage() {
     const [type, setType] = useState<string | null>('DOG');
 
     const [errorOther, setErrorOther] = useState('');
+
+    useEffect(() => {
+        router.query.idx && auth?.axiosInstance && auth.axiosInstance
+            .get('/api/v1/adopt-animal/' + router.query.idx)
+            .then((r) => {
+                const data = r.data;
+
+                setName(data.name);
+                setBreed(data.breed);
+                setPhotoUrl(data.photoUrl);
+                setOld(data.old);
+                setWeight(data.weight);
+                setGender(data.gender);
+                setType(data.type);
+            })
+            .finally(() => {
+                toggleIsDisabled(false);
+            });
+    }, [auth?.axiosInstance, router.query.idx]);
     const onSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -29,8 +51,22 @@ export default function EditAnimalPage() {
             .then(() => {
                 return router.push('/partners/our-animals');
             })
-            .catch(() => {
-                setErrorOther('Server error');
+            .catch((r) => {
+                const responseCode = r.response.code;
+                let msg;
+
+                switch (responseCode) {
+                    case 404:
+                        msg = "Animal of card not found";
+                        break;
+                    case 403:
+                        msg = "You have no permission to edit it!";
+                        break;
+                    default:
+                        msg = "Server error";
+                }
+
+                setErrorOther(msg);
             });
     };
 
@@ -63,7 +99,7 @@ export default function EditAnimalPage() {
                         <div className={'mb-3 text-red'}></div>
                     )}
                     <div className={'flex gap-4 col-span-full'}>
-                        <CustomButton>Add</CustomButton>
+                        <CustomButton className={'w-full'} disabled={isDisabled}>Edit</CustomButton>
                     </div>
                 </div>
             </form>

@@ -6,12 +6,10 @@ import {usePathname} from "next/navigation";
 import {useAuth} from "@/auth/AuthProvider";
 import {AuthContextType} from "@/auth/types";
 import {useEffect, useState} from "react";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faSignOut} from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 
 export const CustomHeader = () => {
-    const {isAuth, currentUser, logout} = useAuth() as AuthContextType;
+    const {isAuth, logout} = useAuth() as AuthContextType;
     const pathname = usePathname();
     const [isMounted, setIsMounted] = useState(false);
 
@@ -63,6 +61,11 @@ export const CustomHeader = () => {
                                     <li>
                                         <Link className={'flex items-center gap-2 text-gray-800 hover:bg-gray-300 py-2 px-4'} href={'/partners/adopted-animals'}>
                                             <span>Adopted animals</span>
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link className={'flex items-center gap-2 text-gray-800 hover:bg-gray-300 py-2 px-4'} href={'/my-animals'}>
+                                            <span>My animals</span>
                                         </Link>
                                     </li>
                                     <li>

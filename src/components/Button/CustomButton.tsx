@@ -37,22 +37,23 @@ export const CustomButton = ({
 
     switch (variant) {
         case "primary":
-            variantClasses = "bg-primary";
+            variantClasses = "bg-primary hover:bg-primary-darker ";
             break;
         case "secondary":
-            variantClasses = "bg-secondary";
+            variantClasses = "bg-secondary hover:bg-primary-secondary-darker";
             break;
         case "danger":
-            variantClasses = "bg-red-500";
-            break
+            variantClasses = "bg-red-500 hover:bg-red-600-darker";
+            break;
         case 'info':
-            variantClasses = "bg-primary-blue"
-            break
+            variantClasses = "bg-primary-blue hover:bg-primary-darker";
+            break;
     }
 
     const classNameObject = {
         [styles['custom-button']]: true,
         [variantClasses || '']: true,
+        'disabled:opacity-70': true,
         [customBorderWidth || 'border']: true,
         [borderRadius || 'rounded-lg']: true,
         [textColor || 'text-white']: true,
@@ -63,7 +64,7 @@ export const CustomButton = ({
 
     if (props.href) {
         return (<Link
-                      className={clsx(classNameObject)}
+                      className={clsx('inline-block', classNameObject)}
                       {...props as LinkProps}>{children}</Link>);
     }
     return (

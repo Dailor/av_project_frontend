@@ -2,7 +2,7 @@ import {CustomInput} from "@/components/formComponents/CustomInput/CustomInput";
 import React, {useState} from "react";
 import {CustomButton} from "@/components/Button/CustomButton";
 import {useAuth} from "@/auth/AuthProvider";
-import {useRouter} from "next/router";
+import {useRouter} from "next/navigation";
 import {CustomSelect} from "@/components/formComponents/CustomSelect/CustomSelect";
 
 export default function AddAnimalPage() {
@@ -62,7 +62,7 @@ export default function AddAnimalPage() {
                         <div className={'mb-3 text-red'}></div>
                     )}
                     <div className={'flex gap-4 col-span-full'}>
-                        <CustomButton>Add</CustomButton>
+                        <CustomButton className={'w-full'}>Add</CustomButton>
                     </div>
                 </div>
             </form>

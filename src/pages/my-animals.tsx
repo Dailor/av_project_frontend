@@ -3,14 +3,14 @@ import {useEffect, useState} from "react";
 import {OurPetCard} from "@/components/OurPetCard/OurPetCard";
 import {AdoptAnimal} from "@/auth/types";
 
-export default function PartnersAdoptedAnimalsPage() {
+export default function MyAnimalsPage() {
     const auth = useAuth();
 
     const [adoptedAnimals, setAdoptedAnimals] = useState<AdoptAnimal[]>([]);
 
     useEffect(() => {
         auth?.axiosInstance && auth?.axiosInstance
-            .get("/api/v1/adopt-animal/adopted")
+            .get("/api/v1/adopt-animal/user")
             .then(r => {
                 setAdoptedAnimals(r.data.adoptAnimals);
             });
@@ -18,7 +18,7 @@ export default function PartnersAdoptedAnimalsPage() {
 
     return (
         <div className={'bg-white container mx-auto mt-2 min-h-[60vh]'}>
-            <h3 className={'mb-3 text-center font-bold text-5xl text-primary-green'}>Adopted animal</h3>
+            <h3 className={'mb-3 text-center font-bold text-5xl text-primary-green'}>My animals</h3>
             <div>
                 {adoptedAnimals.map((item) => {
                     return (

@@ -14,10 +14,21 @@ export interface OurPetCardProps {
     old: string,
     weight: string,
     breed: string,
-    deleteCallback?: (idx: number) => void
+    deleteCallback?: (idx: number) => void,
+    adoptCallback?: (idx: number) => void,
+    errorAdopt?: string
+    successAdopt?: string
+    isOwner?: boolean
 }
 
-export const OurPetCard = ({id, deleteCallback, isSponsor = false, ...props}: OurPetCardProps) => {
+export const OurPetCard = ({
+                               id,
+                               adoptCallback,
+                               deleteCallback,
+                               isSponsor = false,
+                               isOwner = false,
+                               ...props
+                           }: OurPetCardProps) => {
     const [isImgFailure, toggleIsImageFailure] = useState(false);
 
 
@@ -38,7 +49,7 @@ export const OurPetCard = ({id, deleteCallback, isSponsor = false, ...props}: Ou
     }
 
     return (
-        <div className={'flex items-center gap-2 nunito-font shadow-xl px-4 py-4 text-xl text-primary-gray'}>
+        <div className={'flex items-center gap-2 nunito-font shadow-2xl px-4 py-4 text-xl text-primary-gray'}>
             <div
                 className={clsx('flex mr-6 border-4 rounded-full overflow-hidden w-[230px] h-[230px]', imgBorderColorClass)}>
                 <Image width={300} height={300} alt={'our-pet-animal'}
@@ -66,12 +77,25 @@ export const OurPetCard = ({id, deleteCallback, isSponsor = false, ...props}: Ou
                     <div>{props.weight}</div>
                 </div>
                 <div className={'mb-4'}>{props.breed}</div>
-                <div>
-                    <a className={'underline'} href="src/components/OurPetCard#">
-                        To get acquainted
-                        <span className={'ml-4'}><FontAwesomeIcon icon={faArrowRightLong}/></span>
-                    </a>
-                </div>
+                {!isOwner && !isSponsor && !adoptCallback && (
+                    <div>
+                        <a className={'underline'} href="#">
+                            To get acquainted
+                            <span className={'ml-4'}><FontAwesomeIcon icon={faArrowRightLong}/></span>
+                        </a>
+                    </div>
+                )}
+                {adoptCallback && (
+                    <div className={'flex flex-wrap gap-7 items-center'}>
+                        <CustomButton onClick={() => adoptCallback(id)}>Adopt!</CustomButton>
+                        {props.errorAdopt && (
+                            <div className={'text-red-500'}>{props.errorAdopt}</div>
+                        )}
+                        {props.successAdopt && (
+                            <div className={'text-green-500'}>{props.successAdopt}</div>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );

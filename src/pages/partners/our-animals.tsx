@@ -9,12 +9,21 @@ export default function OutAnimalsPage() {
 
     const [refresher, setRefresher] = useState(1);
 
+    const refresh = useCallback(() => {
+        setRefresher((prev) => prev + 1);
+    }, []);
+
     const deleteCallback = useCallback((idx: number) => {
-        axiosInstance.delete('/api/v1/adopt-animal/partner/' + idx)
+        axiosInstance.delete('/api/v1/adopt-animal/' + idx)
             .then(() => {
-                setRefresher((prev) => prev + 1);
+                refresh();
+            })
+            .catch(r => {
+                if (r.response.code == 404) {
+                    refresh();
+                }
             });
-    }, [axiosInstance]);
+    }, [axiosInstance, refresh]);
 
     useEffect(() => {
         if (axiosInstance !== null)
@@ -27,7 +36,7 @@ export default function OutAnimalsPage() {
 
     return (
         <div className={'bg-white container mx-auto mt-2 min-h-[60vh]'}>
-            <h3 className={'text-center font-bold text-3xl text-primary-green'}>Our animals</h3>
+            <h3 className={'mb-3 text-center font-bold text-5xl text-primary-green'}>Our animals</h3>
             <div>
                 {adoptAnimals.map((item) => {
                     return (

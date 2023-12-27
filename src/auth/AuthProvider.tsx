@@ -4,7 +4,7 @@ import {BACKEND_URL, LOGIN_API} from "@/routes";
 import {AuthContextType, UserProject} from "@/auth/types";
 import Cookies from 'universal-cookie';
 import React, {createContext, useCallback, useContext, useEffect, useMemo, useState} from "react";
-import {useRouter} from "next/router";
+import {useRouter} from "next/navigation";
 
 const ACCESS_KEY_TTL = 1000 * 3600 * 2;
 const ACCESS_KEY = "ACCESS_KEY";
@@ -49,15 +49,21 @@ interface AxiosInstanceWrapped {
     axiosInstance: Axios
 }
 
+const getCookie = () => {
+    return new Cookies(null, {path: '/'});
+};
+
+const emptyInstanceWrapped = {};
+
 export function AuthProvider({children}: Props) {
     const router = useRouter();
 
     const [cookie, setCookie] = useState<Cookies | null>(null);
     const [currentUser, setCurrentUser] = useState<UserProject | null>(null);
-    const [axiosInstanceWrapped, setAxiosInstanceWrapped] = useState<AxiosInstanceWrapped | {}>({});
+    const [axiosInstanceWrapped, setAxiosInstanceWrapped] = useState<AxiosInstanceWrapped | {}>(emptyInstanceWrapped);
 
     useEffect(() => {
-        const cookie = new Cookies(null, {path: '/'});
+        const tmpCookie = getCookie();
 
         const getAxiosInstance = (cookie: Cookies) => {
             const instance = axios.create({
@@ -68,7 +74,7 @@ export function AuthProvider({children}: Props) {
 
             instance.interceptors.request.use(
                 (config) => {
-                    const accessToken = cookie.get(ACCESS_KEY);
+                    const accessToken = getAccessToken(cookie);
 
                     if (accessToken)
                         config.headers.Authorization = `Bearer ${accessToken}`;
@@ -77,29 +83,39 @@ export function AuthProvider({children}: Props) {
                 }
             );
 
-            instance.interceptors.response.use((config) => {
-                cookie.remove(ACCESS_KEY);
-                localStorage.removeItem(USERNAME_KEY);
-                setCurrentUser(null);
+            instance.interceptors.response.use(response => response,  (error) => {
+                if(error.response?.status === 401){
+                    cookie.remove(ACCESS_KEY);
+                    localStorage.removeItem(USERNAME_KEY);
+                    setCurrentUser(null);
+                }
 
-                return config;
+                return Promise.reject(error);
             });
 
             return instance;
         };
 
-        const axiosTmp = getAxiosInstance(cookie);
-        const currentUser = loadCurrentUserLocal(cookie);
+        const axiosTmp = getAxiosInstance(tmpCookie);
+        const currentUser = loadCurrentUserLocal(tmpCookie);
 
-        setCookie(cookie);
-        setCurrentUser(currentUser);
-        setAxiosInstanceWrapped({'axiosInstance': axiosTmp});
+
+        if(cookie === null){
+            setCookie(tmpCookie);
+        }
+
+        if (currentUser === null){
+            setCurrentUser(currentUser);
+        }
+
+        if(axiosInstanceWrapped === emptyInstanceWrapped){
+            setAxiosInstanceWrapped({'axiosInstance': axiosTmp});
+        }
 
         if (currentUser === null) {
-            router.push('/').then(() => {
-            });
+            router.push('/');
         }
-    }, []);
+    }, [axiosInstanceWrapped, router]);
 
     const axiosInstance = useMemo(() => {
         return "axiosInstance" in axiosInstanceWrapped ? axiosInstanceWrapped.axiosInstance : null;
@@ -144,7 +160,10 @@ export function AuthProvider({children}: Props) {
     }, [cookie, currentUser]);
 
     const isAuth = useMemo(() => {
-        return !!getCurrentUser();
+        const currentUser = getCurrentUser();
+        const cookie = getCookie();
+
+        return (currentUser === null && !!getAccessToken(cookie) || !!getCurrentUser()) ;
     }, [getCurrentUser]);
 
     return (
